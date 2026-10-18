@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import About from '../components/About.astro';
+import Publications from '../components/Publications.astro';
+import News from '../components/News.astro';
+import Education from '../components/Education.astro';
+import Reviewing from '../components/Reviewing.astro';
+import Contact from '../components/Contact.astro';
+import { profile } from '../data/profile.js';
+---
+<Base title={profile.pageTitle} description={profile.pageDescription}>
+  <About />
+  <Publications />
+  <News />
+  <Education />
+  <Reviewing />
+  <Contact />
+</Base>

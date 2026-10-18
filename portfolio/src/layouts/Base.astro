@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+import '@fontsource/newsreader/latin-400.css';
+import '@fontsource/newsreader/latin-600.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import { profile } from '../data/profile.js';
+import Header from '../components/Header.astro';
+import NodeBackground from '../components/NodeBackground.astro';
+const { title, description } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}/favicon.svg`} type="image/svg+xml" />
+    <script is:inline>
+      (() => {
+        let theme = 'dark';
+        try { if (localStorage.getItem('theme') === 'light') theme = 'light'; } catch {}
+        document.documentElement.classList.add(theme);
+      })();
+    </script>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <NodeBackground />
+    <main id="main" class="container page-content" tabindex="-1"><slot /></main>
+    <footer class="site-footer">© {new Date().getFullYear()} {profile.name}</footer>
+    <script>
+      const reveals = [...document.querySelectorAll('.reveal')];
+      if ('IntersectionObserver' in window) {
+        try {
+          const observer = new IntersectionObserver(entries => {
+            for (const entry of entries) if (entry.isIntersecting) {
+              entry.target.classList.remove('reveal-pending');
+              observer.unobserve(entry.target);
+            }
+          }, { threshold: 0 });
+          for (const section of reveals) {
+            observer.observe(section);
+            section.classList.add('reveal-pending');
+          }
+        } catch {
+          reveals.forEach(section => section.classList.remove('reveal-pending'));
+        }
+      }
+    </script>
+  </body>
+</html>
