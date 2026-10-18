@@ -1,0 +1,92 @@
+---
+import { profile } from '../data/profile.js';
+import ThemeToggle from './ThemeToggle.astro';
+const nav = [
+  { id: 'about', label: 'About' },
+  { id: 'publications', label: 'Publications' },
+  { id: 'news', label: 'News' },
+  { id: 'education', label: 'Education' },
+  { id: 'reviewing', label: 'Reviewing' },
+  { id: 'contact', label: 'Contact' },
+];
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#top" class="wordmark">{profile.name}</a>
+    <nav id="mobile-menu" class="section-nav" aria-label="Sections">
+      <ul>{nav.map(({ id, label }) => <li><a href={`#${id}`} data-nav>{label}</a></li>)}</ul>
+    </nav>
+    <ThemeToggle />
+    <button id="menu-toggle" class="icon-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-menu" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+    </button>
+  </div>
+</header>
+<script>
+  const header = document.querySelector('.site-header');
+  const menu = document.getElementById('mobile-menu');
+  const button = document.getElementById('menu-toggle');
+  const links = [...document.querySelectorAll('[data-nav]')];
+  const sections = [...document.querySelectorAll('main section[id]')];
+  const desktop = window.matchMedia('(min-width: 768px)');
+
+  if (header && menu && button) {
+    function closeMenu() {
+      menu.hidden = !desktop.matches;
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-label', 'Open navigation');
+    }
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      menu.hidden = !open;
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+      if (open) links[0]?.focus();
+    });
+    for (const link of links) link.addEventListener('click', () => {
+      if (!desktop.matches) { closeMenu(); button.focus(); }
+    });
+    header.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        closeMenu();
+        button.focus();
+      }
+    });
+    desktop.addEventListener('change', () => {
+      const wasInMenu = menu.contains(document.activeElement);
+      closeMenu();
+      if (!desktop.matches && wasInMenu) button.focus();
+    });
+    closeMenu();
+    header.classList.add('enhanced');
+    document.body.classList.add('has-fixed-header');
+    button.hidden = false;
+
+    function updateCurrent() {
+      const boundary = header.getBoundingClientRect().height + innerHeight * 0.2;
+      let active = sections[0]?.id;
+      for (const section of sections) if (section.getBoundingClientRect().top <= boundary) active = section.id;
+      if (scrollY + innerHeight >= document.documentElement.scrollHeight - 2) active = sections.at(-1)?.id;
+      for (const link of links) {
+        if (link.getAttribute('href') === `#${active}`) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      }
+    }
+    function updateHeader() {
+      header.toggleAttribute('data-scrolled', window.scrollY > 40);
+      updateCurrent();
+    }
+    function measureHeader() {
+      document.documentElement.style.setProperty('--header-height', `${header.getBoundingClientRect().height}px`);
+      updateHeader();
+    }
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    window.addEventListener('resize', measureHeader, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(measureHeader).observe(header);
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(updateCurrent, { threshold: [0, 0.25, 0.5, 1] });
+      sections.forEach(section => observer.observe(section));
+    }
+    measureHeader();
+  }
+</script>
