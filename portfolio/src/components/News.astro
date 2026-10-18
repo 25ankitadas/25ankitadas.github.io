@@ -1,0 +1,9 @@
+---
+import { news } from '../data/news.js';
+---
+<section id="news" class="reveal" aria-labelledby="news-heading">
+  <div class="section-heading"><span class="section-number" aria-hidden="true">03</span><h2 id="news-heading">News</h2></div>
+  <ol class="timeline">
+    {news.map(item => <li><time datetime={item.iso}>{item.date}</time><p>{item.text}</p></li>)}
+  </ol>
+</section>

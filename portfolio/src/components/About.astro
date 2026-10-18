@@ -1,0 +1,17 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../../../image.jpg';
+import { profile } from '../data/profile.js';
+---
+<section id="about" class="about-grid reveal" aria-labelledby="about-heading">
+  <Image src={portrait} alt={profile.photoAlt} width={560} height={700} format="webp" class="portrait" loading="eager" fetchpriority="high" />
+  <div class="about-content">
+    <h1>{profile.name}</h1>
+    <div class="section-heading"><span class="section-number" aria-hidden="true">01</span><h2 id="about-heading">About</h2></div>
+    <div class="bio">{profile.bio.map(paragraph => <p>{paragraph}</p>)}</div>
+    <div class="interests">
+      <h3>Research Interests</h3>
+      <ul class="tags">{profile.interests.map(interest => <li class="tag">{interest}</li>)}</ul>
+    </div>
+  </div>
+</section>

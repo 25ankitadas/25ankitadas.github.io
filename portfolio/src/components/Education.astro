@@ -1,0 +1,11 @@
+---
+import { education, teaching } from '../data/education.js';
+---
+<section id="education" class="reveal" aria-labelledby="education-heading">
+  <div class="section-heading"><span class="section-number" aria-hidden="true">04</span><h2 id="education-heading">Education and Teaching</h2></div>
+  <h3>Education</h3>
+  <ul class="education-list">
+    {education.map(item => <li><p class="degree">{item.degree}</p><p class="institution">{item.institution}</p><span class="period">{item.years}</span></li>)}
+  </ul>
+  <div class="teaching"><h3>Teaching</h3><p><strong>{teaching.course}</strong></p><p>{teaching.role}</p><span class="period">{teaching.period}</span><p>{teaching.instructor}</p></div>
+</section>

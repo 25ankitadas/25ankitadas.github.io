@@ -1,0 +1,7 @@
+---
+import { reviewing } from '../data/reviewing.js';
+---
+<section id="reviewing" class="reveal" aria-labelledby="reviewing-heading">
+  <div class="section-heading"><span class="section-number" aria-hidden="true">05</span><h2 id="reviewing-heading">Reviewer Experience</h2></div>
+  <ul class="reviewer-list">{reviewing.map(venue => <li>{venue}</li>)}</ul>
+</section>
